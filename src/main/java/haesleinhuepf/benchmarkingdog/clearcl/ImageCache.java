@@ -26,10 +26,10 @@ public class ImageCache
         mClearCLImage.getHeight() != pHeight
         ) {
 
-      mContext.createImage(HostAccessType.WriteOnly,
-                           KernelAccessType.ReadOnly,
-                           ImageChannelOrder.Intensity,
-                           ImageChannelDataType.Float,
+      mClearCLImage = mContext.createImage(pHostAccessType,
+                           pKernelAccessType,
+                           pImageChannelOrder,
+                           pImageChannelDataType,
                            pWidth,
                            pHeight);
     }
