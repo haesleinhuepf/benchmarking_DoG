@@ -18,11 +18,16 @@ public class ClearCLGaussianBlur extends OpsBase
 
   private ClearCLImage mKernelClearCLImage;
 
+  private ImageCache mImageCache;
+  private ImageCache mKernelImageCache;
+
   public ClearCLGaussianBlur(ClearCLQueue pClearCLQueue) throws
                                                          IOException
   {
     super(pClearCLQueue);
     mContext = getContext();
+    mImageCache = new ImageCache(mContext);
+    mKernelImageCache = new ImageCache(mContext);
 
     ClearCLProgram
         lConvolutionProgram =
@@ -37,17 +42,18 @@ public class ClearCLGaussianBlur extends OpsBase
         lConvolutionProgram.createKernel("convolve_image_2d");
   }
 
-  public ClearCLImage gausianBlur(ClearCLImage input, float sigma)
+  public ClearCLImage gaussianBlur(ClearCLImage input, float sigma)
   {
     createBlur2DFilterKernelImage(sigma);
 
     ClearCLImage
         output =
-        mContext.createImage(HostAccessType.ReadWrite,
-                             KernelAccessType.ReadWrite,
-                             ImageChannelOrder.Intensity,
-                             ImageChannelDataType.Float,
-                             input.getDimensions());
+        mImageCache.get2DImage(HostAccessType.ReadWrite,
+                               KernelAccessType.ReadWrite,
+                               ImageChannelOrder.Intensity,
+                               ImageChannelDataType.Float,
+                               input.getWidth(),
+                               input.getHeight());
 
     mConvolutionKernelImage2F.setArgument("input", input);
     mConvolutionKernelImage2F.setArgument("filterkernel",
@@ -66,7 +72,7 @@ public class ClearCLGaussianBlur extends OpsBase
     int lKernelDimension = lRadius * 2 + 1;
 
     mKernelClearCLImage =
-        mContext.createImage(HostAccessType.WriteOnly,
+        mKernelImageCache.get2DImage(HostAccessType.WriteOnly,
                              KernelAccessType.ReadOnly,
                              ImageChannelOrder.Intensity,
                              ImageChannelDataType.Float,
