@@ -1,8 +1,12 @@
 package haesleinhuepf.benchmarkingdog;
 
-import clearcl.*;
+import clearcl.ClearCL;
+import clearcl.ClearCLContext;
+import clearcl.ClearCLDevice;
+import clearcl.ClearCLImage;
 import clearcl.backend.ClearCLBackendInterface;
 import clearcl.backend.javacl.ClearCLBackendJavaCL;
+import haesleinhuepf.benchmarkingdog.clearcl.ClearCLDifferenceOfGaussian;
 import haesleinhuepf.benchmarkingdog.clearcl.ClearCLGaussianBlur;
 import haesleinhuepf.benchmarkingdog.clearcl.ClearCLSum;
 import haesleinhuepf.benchmarkingdog.clearcl.ClearCLUtilities;
@@ -15,9 +19,10 @@ import org.scijava.ui.UIService;
 
 import java.io.IOException;
 
-@Plugin(type = Command.class, menuPath = "Plugins>DoG (ClearCL)")
-public class DoGClearCL<T extends RealType<T>> implements Command
+@Plugin(type = Command.class, menuPath = "Plugins>DoG (Fast ClearCL)")
+public class DogFastClearCL<T extends RealType<T>> implements Command
 {
+
   private ClearCLContext mContext;
 
   @Parameter private Img currentData;
@@ -41,30 +46,19 @@ public class DoGClearCL<T extends RealType<T>> implements Command
 
       ClearCLImage image = ClearCLUtilities.convertImgToClearCLImage(mContext, currentData);
 
-      ClearCLGaussianBlur lClearCLGaussianBlur = new ClearCLGaussianBlur(mContext.getDefaultQueue());
+      ClearCLDifferenceOfGaussian lClearCLDifferenceOfGaussian = new ClearCLDifferenceOfGaussian(mContext.getDefaultQueue());
 
       StopWatch watch = new StopWatch();
       watch.start();
-      ClearCLImage filtered1 = lClearCLGaussianBlur.gaussianBlur(image, (float)sigma1);
-      watch.stop("CCL 1st Gaussian blur");
-      watch.start();
-      ClearCLImage filtered2 = lClearCLGaussianBlur.gaussianBlur(image, (float)sigma2);
-      watch.stop("CCL 2nd Gaussian blur");
+      ClearCLImage result = lClearCLDifferenceOfGaussian.differenceOfGaussian(image, (float)sigma1, (float)sigma2);
+      watch.stop("CCL Difference of Gaussian");
 
-      ClearCLSum lClearCLSum = new ClearCLSum(mContext.getDefaultQueue());
-      watch.start();
-      ClearCLImage result = lClearCLSum.subtract(filtered1, filtered2);
-      watch.stop("CCL Subtracting images");
-
-      uiService.show(ClearCLUtilities.convertClearClImageToImg(mContext, filtered1));
-      uiService.show(ClearCLUtilities.convertClearClImageToImg(mContext, filtered2));
       uiService.show(ClearCLUtilities.convertClearClImageToImg(mContext, result));
     }
     catch (IOException e)
     {
       e.printStackTrace();
     }
+
   }
-
-
 }

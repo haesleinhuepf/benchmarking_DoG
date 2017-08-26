@@ -50,10 +50,21 @@ public class Main
 
     ij.ui().show(img);
 
+    Thread.sleep(1000);
+
     ij.command().run(DoGImageJOps.class, true, imglibParameters);
+
+    Thread.sleep(1000);
 
     ij.command().run(DoGImageJLegacy.class, true, legacyParameters);
 
+    Thread.sleep(1000);
+
     ij.command().run(DoGClearCL.class, true, imglibParameters);
+
+    Thread.sleep(1000);
+
+    ij.command().run(DogFastClearCL.class, true, imglibParameters);
+    
   }
 }

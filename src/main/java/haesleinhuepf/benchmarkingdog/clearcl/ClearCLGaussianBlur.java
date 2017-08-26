@@ -18,7 +18,7 @@ public class ClearCLGaussianBlur extends OpsBase
 
   private ClearCLImage mKernelClearCLImage;
 
-  private ImageCache mImageCache;
+  private ImageCache mOutputImageCache;
   private ImageCache mKernelImageCache;
 
   public ClearCLGaussianBlur(ClearCLQueue pClearCLQueue) throws
@@ -26,7 +26,7 @@ public class ClearCLGaussianBlur extends OpsBase
   {
     super(pClearCLQueue);
     mContext = getContext();
-    mImageCache = new ImageCache(mContext);
+    mOutputImageCache = new ImageCache(mContext);
     mKernelImageCache = new ImageCache(mContext);
 
     ClearCLProgram
@@ -48,12 +48,12 @@ public class ClearCLGaussianBlur extends OpsBase
 
     ClearCLImage
         output =
-        mImageCache.get2DImage(HostAccessType.ReadWrite,
-                               KernelAccessType.ReadWrite,
-                               ImageChannelOrder.Intensity,
-                               ImageChannelDataType.Float,
-                               input.getWidth(),
-                               input.getHeight());
+        mOutputImageCache.get2DImage(HostAccessType.ReadWrite,
+                                     KernelAccessType.ReadWrite,
+                                     ImageChannelOrder.Intensity,
+                                     ImageChannelDataType.Float,
+                                     input.getWidth(),
+                                     input.getHeight());
 
     mConvolutionKernelImage2F.setArgument("input", input);
     mConvolutionKernelImage2F.setArgument("filterkernel",
@@ -69,40 +69,8 @@ public class ClearCLGaussianBlur extends OpsBase
   private void createBlur2DFilterKernelImage(float sigma)
   {
     int lRadius = (int) Math.ceil(3.0f * sigma);
-    int lKernelDimension = lRadius * 2 + 1;
-
-    mKernelClearCLImage =
-        mKernelImageCache.get2DImage(HostAccessType.WriteOnly,
-                             KernelAccessType.ReadOnly,
-                             ImageChannelOrder.Intensity,
-                             ImageChannelDataType.Float,
-                             lKernelDimension,
-                             lKernelDimension);
-
-    float[]
-        lFilterKernelArray =
-        new float[lKernelDimension * lKernelDimension];
-    float sum = 0.0f;
-    for (int x = -lRadius; x < lRadius + 1; x++)
-    {
-      for (int y = -lRadius; y < lRadius + 1; y++)
-      {
-        int pos = x + lRadius + (y + lRadius) * lKernelDimension;
-        float
-            weight =
-            (float) Math.exp(-((float) (x * x + y * y) / (2f
-                                                          * sigma
-                                                          * sigma)));
-        lFilterKernelArray[pos] = weight;
-        sum += weight;
-      }
-    }
-
-    for (int i = 0; i < lFilterKernelArray.length; i++)
-    {
-      lFilterKernelArray[i] = lFilterKernelArray[i] / sum;
-    }
+    mKernelClearCLImage = ClearCLGaussUtilities.createBlur2DFilterKernelImage(mKernelImageCache, sigma, lRadius);
     mRadius = lRadius;
-    mKernelClearCLImage.readFrom(lFilterKernelArray, true);
   }
+
 }
