@@ -10,7 +10,7 @@ import clearcl.ops.OpsBase;
 import java.io.IOException;
 import java.util.Arrays;
 
-public class ClearCLLookupWeigtsDifferenceOfGaussian extends OpsBase
+public class ClearCLLookupWeightsDifferenceOfGaussian extends OpsBase
 {
   ImageCache mMinuendFilterKernelImageCache;
   ImageCache mSubtrahendFilterKernelImageCache;
@@ -19,7 +19,7 @@ public class ClearCLLookupWeigtsDifferenceOfGaussian extends OpsBase
   ClearCLContext mContext;
   private ClearCLKernel mSubtractionConvolvedKernelImage2F;
 
-  public ClearCLLookupWeigtsDifferenceOfGaussian(ClearCLQueue pClearCLQueue) throws
+  public ClearCLLookupWeightsDifferenceOfGaussian(ClearCLQueue pClearCLQueue) throws
                                                                  IOException
   {
     super(pClearCLQueue);
@@ -102,7 +102,7 @@ public class ClearCLLookupWeigtsDifferenceOfGaussian extends OpsBase
     }
 
     long originalSize0 = sizes[0];
-    int numberOfSplits = 16;
+    long numberOfSplits = sizes[0] * sizes[1] / 65536;
     for (int j = 0; j < numberOfSplits; j++) {
       if (j < numberOfSplits - 1) {
         sizes[0] = originalSize0 / numberOfSplits;
@@ -110,8 +110,8 @@ public class ClearCLLookupWeigtsDifferenceOfGaussian extends OpsBase
         sizes[0] = originalSize0 - offsets[0];
       }
 
-      System.out.println("s offset: " + Arrays.toString(offsets));
-      System.out.println("s sizes: " + Arrays.toString(sizes));
+      //System.out.println("s offset: " + Arrays.toString(offsets));
+      //System.out.println("s sizes: " + Arrays.toString(sizes));
       mSubtractionConvolvedKernelImage2F.setGlobalSizes(sizes);
       mSubtractionConvolvedKernelImage2F.setGlobalOffsets(offsets);
       mSubtractionConvolvedKernelImage2F.run();

@@ -99,7 +99,7 @@ public class ClearCLOnlineCalculateWeightsDifferenceOfGaussian extends OpsBase
     }
 
     long originalSize0 = sizes[0];
-    int numberOfSplits = 32;
+    long numberOfSplits = sizes[0] * sizes[1] / 65536;
 
     StopWatch sw = new StopWatch();
     for (int j = 0; j < numberOfSplits; j++) {
@@ -109,8 +109,8 @@ public class ClearCLOnlineCalculateWeightsDifferenceOfGaussian extends OpsBase
         sizes[0] = originalSize0 - offsets[0];
       }
 
-      System.out.println("f offset: " + Arrays.toString(offsets));
-      System.out.println("f sizes: " + Arrays.toString(sizes));
+      //System.out.println("f offset: " + Arrays.toString(offsets));
+      //System.out.println("f sizes: " + Arrays.toString(sizes));
       mSubtractionConvolvedKernelImage2F.setGlobalSizes(sizes);
       mSubtractionConvolvedKernelImage2F.setGlobalOffsets(offsets);
       try
