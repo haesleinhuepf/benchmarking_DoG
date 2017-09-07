@@ -79,22 +79,21 @@ __kernel void subtract_convolved_images_2d_fast(
     float weighted_sum_minuend = 0.0f;
     float weighted_sum_subtrahend = 0.0f;
 
-    float sigma_minuend_squared_twice = 2.0f * sigma_minuend * sigma_minuend;
+    float sigma_minuend_squared_twice = 2.0f * pow(sigma_minuend, 2);
+    float sigma_subtrahend_squared_twice = 2.0f * pow(sigma_subtrahend, 2);
 
     for(int x = -radius; x < radius + 1; x++)
     {
-        float xSquared = pow(x,2);
+        float xSquared = pow((float)x,2);
         for(int y = -radius; y < radius + 1; y++)
         {
-            float ySquared = pow(y,2);
+            float ySquared = pow((float)y,2);
             const int2 kernelPos = {x+radius, y+radius};
 
             float image_pixel_value = read_imagef(input, sampler, pos + (int2)( x, y )).x;
 
             float weight_minuend = exp(-((xSquared + ySquared) / sigma_minuend_squared_twice));
-            float weight_subtrahend = exp(-((float) (x * x + y * y) / (2.0f
-                                                          * sigma_subtrahend
-                                                          * sigma_subtrahend)));
+            float weight_subtrahend = exp(-((float) (xSquared + ySquared) / sigma_subtrahend_squared_twice));
 
             weighted_sum_minuend += weight_minuend * image_pixel_value;
             weighted_sum_subtrahend += weight_subtrahend * image_pixel_value;
