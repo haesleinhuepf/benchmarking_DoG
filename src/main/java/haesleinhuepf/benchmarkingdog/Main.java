@@ -19,7 +19,7 @@ public class Main
     ij.ui().showUI();
 
     // Create test data
-    int size = 128;
+    int size = 2048;
 
     Img<FloatType> img = ArrayImgs.floats(new long[] { size, size });
 

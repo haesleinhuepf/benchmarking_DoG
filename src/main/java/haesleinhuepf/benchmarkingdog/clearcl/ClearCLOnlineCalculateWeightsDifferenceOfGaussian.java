@@ -6,6 +6,7 @@ import clearcl.enums.ImageChannelDataType;
 import clearcl.enums.ImageChannelOrder;
 import clearcl.enums.KernelAccessType;
 import clearcl.ops.OpsBase;
+import haesleinhuepf.benchmarkingdog.StopWatch;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -98,7 +99,9 @@ public class ClearCLOnlineCalculateWeightsDifferenceOfGaussian extends OpsBase
     }
 
     long originalSize0 = sizes[0];
-    int numberOfSplits = 16;
+    int numberOfSplits = 32;
+
+    StopWatch sw = new StopWatch();
     for (int j = 0; j < numberOfSplits; j++) {
       if (j < numberOfSplits - 1) {
         sizes[0] = originalSize0 / numberOfSplits;
@@ -110,7 +113,16 @@ public class ClearCLOnlineCalculateWeightsDifferenceOfGaussian extends OpsBase
       System.out.println("f sizes: " + Arrays.toString(sizes));
       mSubtractionConvolvedKernelImage2F.setGlobalSizes(sizes);
       mSubtractionConvolvedKernelImage2F.setGlobalOffsets(offsets);
-      mSubtractionConvolvedKernelImage2F.run();
+      try
+      {
+        sw.start();
+        mSubtractionConvolvedKernelImage2F.run();
+      } catch (Throwable t) {
+        sw.stop("Catch after");
+        t.printStackTrace();
+
+
+      }
       offsets[0] += sizes[0];
     }
     return output;

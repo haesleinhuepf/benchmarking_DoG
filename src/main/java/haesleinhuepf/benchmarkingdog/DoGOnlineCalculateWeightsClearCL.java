@@ -50,7 +50,7 @@ public class DoGOnlineCalculateWeightsClearCL<T extends RealType<T>> implements 
       watch.start();
       ClearCLImage result = lClearCLOnlineCalculateWeightsDifferenceOfGaussian
           .differenceOfGaussian(image, (float)sigma1, (float)sigma2);
-      watch.stop("CCL Difference of Gaussian");
+      watch.stop("Online calc CCL Difference of Gaussian");
 
       uiService.show(ClearCLUtilities.convertClearClImageToImg(mContext, result));
     }

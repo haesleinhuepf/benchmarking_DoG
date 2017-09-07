@@ -87,10 +87,10 @@ __kernel void subtract_convolved_images_2d_fast(
 
             float image_pixel_value = read_imagef(input, sampler, pos + (int2)( x, y )).x;
 
-            float weight_minuend = exp(-((float) (x * x + y * y) / (2.0
+            float weight_minuend = exp(-((float) (x * x + y * y) / (2.0f
                                                           * sigma_minuend
                                                           * sigma_minuend)));
-            float weight_subtrahend = exp(-((float) (x * x + y * y) / (2.0
+            float weight_subtrahend = exp(-((float) (x * x + y * y) / (2.0f
                                                           * sigma_subtrahend
                                                           * sigma_subtrahend)));
 
