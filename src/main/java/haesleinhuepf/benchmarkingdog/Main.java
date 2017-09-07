@@ -19,7 +19,7 @@ public class Main
     ij.ui().showUI();
 
     // Create test data
-    int size = 512;
+    int size = 128;
 
     Img<FloatType> img = ArrayImgs.floats(new long[] { size, size });
 
@@ -49,22 +49,26 @@ public class Main
                        20 };
 
     ij.ui().show(img);
+//
+//    Thread.sleep(1000);
+//
+//    ij.command().run(DoGImageJOps.class, true, imglibParameters);
+//
+//    Thread.sleep(1000);
+//
+//    ij.command().run(DoGImageJLegacy.class, true, legacyParameters);
+//
+//    Thread.sleep(1000);
+//
+//    ij.command().run(DoGClearCL.class, true, imglibParameters);
+//
+//    Thread.sleep(1000);
+//
+    ij.command().run(DoGLookupWeightsClearCL.class, true, imglibParameters);
 
     Thread.sleep(1000);
 
-    ij.command().run(DoGImageJOps.class, true, imglibParameters);
-
-    Thread.sleep(1000);
-
-    ij.command().run(DoGImageJLegacy.class, true, legacyParameters);
-
-    Thread.sleep(1000);
-
-    ij.command().run(DoGClearCL.class, true, imglibParameters);
-
-    Thread.sleep(1000);
-
-    ij.command().run(DogFastClearCL.class, true, imglibParameters);
+    ij.command().run(DoGOnlineCalculateWeightsClearCL.class, true, imglibParameters);
     
   }
 }

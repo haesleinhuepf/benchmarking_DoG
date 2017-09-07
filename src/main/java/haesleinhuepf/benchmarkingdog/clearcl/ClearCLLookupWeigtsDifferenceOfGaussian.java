@@ -8,8 +8,9 @@ import clearcl.enums.KernelAccessType;
 import clearcl.ops.OpsBase;
 
 import java.io.IOException;
+import java.util.Arrays;
 
-public class ClearCLDifferenceOfGaussian extends OpsBase
+public class ClearCLLookupWeigtsDifferenceOfGaussian extends OpsBase
 {
   ImageCache mMinuendFilterKernelImageCache;
   ImageCache mSubtrahendFilterKernelImageCache;
@@ -18,7 +19,7 @@ public class ClearCLDifferenceOfGaussian extends OpsBase
   ClearCLContext mContext;
   private ClearCLKernel mSubtractionConvolvedKernelImage2F;
 
-  public ClearCLDifferenceOfGaussian(ClearCLQueue pClearCLQueue) throws
+  public ClearCLLookupWeigtsDifferenceOfGaussian(ClearCLQueue pClearCLQueue) throws
                                                                  IOException
   {
     super(pClearCLQueue);
@@ -71,6 +72,15 @@ public class ClearCLDifferenceOfGaussian extends OpsBase
                                      pInputImage.getWidth(),
                                      pInputImage.getHeight());
 
+    long[] imageDimensions = pInputImage.getDimensions();
+//    long[] workgroupDimensions = new long[imageDimensions.length];
+//    for (int i = 0; i < imageDimensions.length; i++) {
+//      workgroupDimensions[i] = 4;
+//    }
+
+    System.out.println("gl: " + Arrays.toString(imageDimensions));
+    //System.out.println("ws: " + Arrays.toString(workgroupDimensions));
+
     mSubtractionConvolvedKernelImage2F.setArgument("input",
                                                    pInputImage);
     mSubtractionConvolvedKernelImage2F.setArgument(
@@ -81,9 +91,32 @@ public class ClearCLDifferenceOfGaussian extends OpsBase
         lSubtrahendFilterKernelImage);
     mSubtractionConvolvedKernelImage2F.setArgument("output", output);
     mSubtractionConvolvedKernelImage2F.setArgument("radius", lRadius);
-    mSubtractionConvolvedKernelImage2F.setGlobalSizes(pInputImage.getDimensions());
-    mSubtractionConvolvedKernelImage2F.run();
+    mSubtractionConvolvedKernelImage2F.setGlobalSizes(imageDimensions);
+    //mSubtractionConvolvedKernelImage2F.setLocalSizes(workgroupDimensions);
 
+    long[] sizes = new long[pInputImage.getDimensions().length];
+    long[] offsets = new long[pInputImage.getDimensions().length];
+    for (int i = 0; i < sizes.length; i++) {
+      sizes[i] = pInputImage.getDimensions()[i];
+      offsets[i] = 0;
+    }
+
+    long originalSize0 = sizes[0];
+    int numberOfSplits = 16;
+    for (int j = 0; j < numberOfSplits; j++) {
+      if (j < numberOfSplits - 1) {
+        sizes[0] = originalSize0 / numberOfSplits;
+      } else {
+        sizes[0] = originalSize0 - offsets[0];
+      }
+
+      System.out.println("s offset: " + Arrays.toString(offsets));
+      System.out.println("s sizes: " + Arrays.toString(sizes));
+      mSubtractionConvolvedKernelImage2F.setGlobalSizes(sizes);
+      mSubtractionConvolvedKernelImage2F.setGlobalOffsets(offsets);
+      mSubtractionConvolvedKernelImage2F.run();
+      offsets[0] += sizes[0];
+    }
     return output;
   }
 }

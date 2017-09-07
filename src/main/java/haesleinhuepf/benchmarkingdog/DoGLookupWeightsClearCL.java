@@ -6,9 +6,7 @@ import clearcl.ClearCLDevice;
 import clearcl.ClearCLImage;
 import clearcl.backend.ClearCLBackendInterface;
 import clearcl.backend.javacl.ClearCLBackendJavaCL;
-import haesleinhuepf.benchmarkingdog.clearcl.ClearCLDifferenceOfGaussian;
-import haesleinhuepf.benchmarkingdog.clearcl.ClearCLGaussianBlur;
-import haesleinhuepf.benchmarkingdog.clearcl.ClearCLSum;
+import haesleinhuepf.benchmarkingdog.clearcl.ClearCLLookupWeigtsDifferenceOfGaussian;
 import haesleinhuepf.benchmarkingdog.clearcl.ClearCLUtilities;
 import net.imglib2.img.Img;
 import net.imglib2.type.numeric.RealType;
@@ -20,7 +18,7 @@ import org.scijava.ui.UIService;
 import java.io.IOException;
 
 @Plugin(type = Command.class, menuPath = "Plugins>DoG (Fast ClearCL)")
-public class DogFastClearCL<T extends RealType<T>> implements Command
+public class DoGLookupWeightsClearCL<T extends RealType<T>> implements Command
 {
 
   private ClearCLContext mContext;
@@ -46,12 +44,13 @@ public class DogFastClearCL<T extends RealType<T>> implements Command
 
       ClearCLImage image = ClearCLUtilities.convertImgToClearCLImage(mContext, currentData);
 
-      ClearCLDifferenceOfGaussian lClearCLDifferenceOfGaussian = new ClearCLDifferenceOfGaussian(mContext.getDefaultQueue());
+      ClearCLLookupWeigtsDifferenceOfGaussian
+          lClearCLLookupWeigtsDifferenceOfGaussian = new ClearCLLookupWeigtsDifferenceOfGaussian(mContext.getDefaultQueue());
 
       StopWatch watch = new StopWatch();
       watch.start();
-      ClearCLImage result = lClearCLDifferenceOfGaussian.differenceOfGaussian(image, (float)sigma1, (float)sigma2);
-      watch.stop("CCL Difference of Gaussian");
+      ClearCLImage result = lClearCLLookupWeigtsDifferenceOfGaussian.differenceOfGaussian(image, (float)sigma1, (float)sigma2);
+      watch.stop("Fast CCL Difference of Gaussian");
 
       uiService.show(ClearCLUtilities.convertClearClImageToImg(mContext, result));
     }
