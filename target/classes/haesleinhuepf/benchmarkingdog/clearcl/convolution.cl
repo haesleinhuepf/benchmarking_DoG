@@ -27,6 +27,37 @@ __kernel void convolve_image_2d(
 }
 
 
+__kernel void convolve_image_2d_separated(
+        __read_only image2d_t input,
+        __read_only image2d_t filterkernel,
+        __write_only image2d_t output,
+        __private int radius,
+        __private int dim
+)
+{
+    const sampler_t sampler = CLK_NORMALIZED_COORDS_FALSE | CLK_ADDRESS_CLAMP_TO_EDGE | CLK_FILTER_NEAREST;
+
+    const int2 dir   = (int2)(dim==0,dim==1);
+
+    int2 pos = {get_global_id(0), get_global_id(1)};
+
+    float sum = 0.0f;
+
+    for(int x = -radius; x < radius + 1; x++)
+    {
+        const int2 kernelPos = (int2){radius, radius} + x * dir;
+        sum += read_imagef(filterkernel, sampler, kernelPos).x
+             * read_imagef(input, sampler, pos + x * dir).x;
+
+    }
+
+    float4 pix = {sum,0,0,0};
+	write_imagef(output, pos, pix);
+}
+
+
+
+
 __kernel void subtract_convolved_images_2d(
         __read_only image2d_t input,
         __read_only image2d_t filterkernel_minuend,
