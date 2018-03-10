@@ -14,7 +14,7 @@ public class ClearCLGaussUtilities
     ClearCLImage lKernelClearCLImage =
         pKernelImageCache.get2DImage(HostAccessType.WriteOnly,
                                      KernelAccessType.ReadOnly,
-                                     ImageChannelOrder.Intensity,
+                                     ImageChannelOrder.R,
                                      ImageChannelDataType.Float,
                                      lKernelDimension,
                                      lKernelDimension);

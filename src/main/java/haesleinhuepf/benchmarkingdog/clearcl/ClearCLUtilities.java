@@ -64,7 +64,7 @@ public class ClearCLUtilities
         lClearClImage =
         pContext.createImage(HostAccessType.ReadWrite,
                              KernelAccessType.ReadWrite,
-                             ImageChannelOrder.Intensity,
+                             ImageChannelOrder.R,
                              ImageChannelDataType.Float,
                              dimensions);
 

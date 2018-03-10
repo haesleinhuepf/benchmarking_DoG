@@ -52,7 +52,7 @@ public class ClearCLGaussianBlurDimensionSeparated extends OpsBase
         output =
         mOutputImageCache.get2DImage(HostAccessType.ReadWrite,
                                      KernelAccessType.ReadWrite,
-                                     ImageChannelOrder.Intensity,
+                                     ImageChannelOrder.R,
                                      ImageChannelDataType.Float,
                                      input.getWidth(),
                                      input.getHeight());
@@ -62,7 +62,7 @@ public class ClearCLGaussianBlurDimensionSeparated extends OpsBase
         temp =
         mTempImageCache.get2DImage(HostAccessType.ReadWrite,
                                      KernelAccessType.ReadWrite,
-                                     ImageChannelOrder.Intensity,
+                                     ImageChannelOrder.R,
                                      ImageChannelDataType.Float,
                                      input.getWidth(),
                                      input.getHeight());

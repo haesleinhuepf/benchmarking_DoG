@@ -2,6 +2,7 @@ package haesleinhuepf.benchmarkingdog;
 
 import clearcl.*;
 import clearcl.backend.ClearCLBackendInterface;
+import clearcl.backend.ClearCLBackends;
 import clearcl.backend.javacl.ClearCLBackendJavaCL;
 import haesleinhuepf.benchmarkingdog.clearcl.ClearCLGaussianBlur;
 import haesleinhuepf.benchmarkingdog.clearcl.ClearCLSum;
@@ -32,7 +33,7 @@ public class DoGDimensionSeparatedClearCL<T extends RealType<T>> implements Comm
   {
     ClearCLBackendInterface
         lClearCLBackend =
-        new ClearCLBackendJavaCL();
+            ClearCLBackends.getFunctionalBackend();
     try (ClearCL lClearCL = new ClearCL(lClearCLBackend))
     {
       ClearCLDevice lBestGPUDevice = lClearCL.getBestGPUDevice();

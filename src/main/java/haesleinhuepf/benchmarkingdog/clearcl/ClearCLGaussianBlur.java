@@ -50,7 +50,7 @@ public class ClearCLGaussianBlur extends OpsBase
         output =
         mOutputImageCache.get2DImage(HostAccessType.ReadWrite,
                                      KernelAccessType.ReadWrite,
-                                     ImageChannelOrder.Intensity,
+                                     ImageChannelOrder.R,
                                      ImageChannelDataType.Float,
                                      input.getWidth(),
                                      input.getHeight());

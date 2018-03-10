@@ -68,7 +68,7 @@ public class ClearCLOnlineCalculateWeightsDifferenceOfGaussian extends OpsBase
         output =
         mOutputImageCache.get2DImage(HostAccessType.ReadWrite,
                                      KernelAccessType.ReadWrite,
-                                     ImageChannelOrder.Intensity,
+                                     ImageChannelOrder.R,
                                      ImageChannelDataType.Float,
                                      pInputImage.getWidth(),
                                      pInputImage.getHeight());
